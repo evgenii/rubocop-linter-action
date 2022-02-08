@@ -9,7 +9,7 @@ module Github
     end
 
     def sha
-      ENV["GITHUB_SHA"]
+      event.dig("pull_request", "head", "sha") || ENV['GITHUB_SHA']
     end
 
     def token

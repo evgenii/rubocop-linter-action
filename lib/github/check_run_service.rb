@@ -13,10 +13,13 @@ module Github
     end
 
     def run
-      @results = report.build
       id, started_at = create_check
+
+      @results = report.build
+
       update_check(id, started_at)
       complete_check(id, started_at)
+
       success?
     end
 
@@ -81,7 +84,8 @@ module Github
       {
         name: check_name,
         head_sha: github_data.sha,
-        status: status
+        status: status,
+        started_at: Time.now.iso8601
       }
     end
 
