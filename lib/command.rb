@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class Command
-  attr_reader :config
+  attr_reader :config, :github_data
 
-  def initialize(config)
+  def initialize(config, github_data)
     @config = config
+    @github_data = github_data
   end
 
   def build
@@ -16,6 +17,8 @@ class Command
   private
 
   def base_branch
+    return github_data.base_sha if github_data.pull_request?
+
     config.fetch("base_branch", "origin/master")
   end
 

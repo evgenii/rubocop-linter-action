@@ -8,8 +8,20 @@ module Github
       @event = event
     end
 
+    def pull_request?
+      !event.dig("pull_request").nil?
+    end
+
     def sha
-      ENV["GITHUB_SHA"]
+      return event.dig("pull_request", "head", "sha") if pull_request?
+
+      ENV['GITHUB_SHA']
+    end
+
+    def base_sha
+      return event.dig("pull_request", "base", "sha") if pull_request?
+
+      event.dig("before") || ENV['GITHUB_BASE_SHA']
     end
 
     def token

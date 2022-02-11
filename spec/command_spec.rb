@@ -3,7 +3,9 @@
 require "./spec/spec_helper"
 
 describe Command do
-  subject(:command) { Command.new(config) }
+  let(:guthub_data) { Github::Data.new(event) }
+
+  subject(:command) { Command.new(config, guthub_data) }
 
   describe "#build" do
     context "when config file exists" do
@@ -36,6 +38,17 @@ describe Command do
           it "defaults to origin/master" do
             expect(command.build).to eq(
               "git diff origin/master... --name-only --diff-filter=AM | xargs "\
+              "rubocop --parallel -f json"
+            )
+          end
+        end
+
+        context "when pull_request event" do
+          let(:guthub_data) { Github::Data.new(pull_request_event) }
+
+          it "defaults to origin/master" do
+            expect(command.build).to eq(
+              "git diff base_sha... --name-only --diff-filter=AM | xargs "\
               "rubocop --parallel -f json"
             )
           end
